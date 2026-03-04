@@ -1,0 +1,184 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            /* Interactive background with parallax-like effect */
+            background: 
+                linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                url("{% static 'images/login-bg.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Optional: slight floating animation for the background */
+        @keyframes bgMove {
+            0% { background-position: center top; }
+            50% { background-position: center center; }
+            100% { background-position: center top; }
+        }
+       
+
+      .login-container {
+    background: rgba(43, 42, 42, 0.15); /* transparent white */
+    backdrop-filter: blur(10px);
+    padding: 40px 35px;
+    border-radius: 15px;
+    box-shadow: 0 15px 40px rgba(247, 246, 246, 0.25);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    animation: fadeIn 1s ease;
+    position: relative;
+    color: white; /* default text color */
+}
+
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(-20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .messages p {
+            color: red;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 15px;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #764ba2;
+            box-shadow: 0 0 5px rgba(118, 75, 162, 0.5);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #764ba2;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #667eea;
+        }
+
+        /* Home Button */
+        .home-btn {
+            display: block;
+            width: 150px;
+            margin: 15px auto 0 auto;
+            padding: 10px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+            text-decoration: none;
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        .home-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            input[type="text"], input[type="password"] {
+                padding: 10px 12px;
+            }
+
+            button {
+                padding: 12px;
+                font-size: 15px;
+            }
+
+            .home-btn {
+                width: 120px;
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+       <h2 style="color: white;">Admin Login</h2>
+
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <label style="color: white;">Username:</label>
+            <input type="text" name="username" placeholder="Enter your username" required>
+
+            <label style="color: white;">Password:</label>
+            <input type="password" name="password" placeholder="Enter your password" required>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <!-- Back to Home Button -->
+        <a href="{% url 'home' %}" class="home-btn">← Back to Home</a>
+    </div>
+</body>
+</html>

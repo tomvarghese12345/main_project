@@ -1,0 +1,155 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>About | NewPro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 50px 20px;
+            color: white;
+            background: 
+                linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                url("{% static 'images/timetable-background.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            text-align: justify;
+        }
+
+        .boxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .box {
+            flex: 1 1 45%;
+            background: rgba(255,255,255,0.15);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.25);
+        }
+
+        .box h3 {
+            margin-bottom: 15px;
+            color: #00f2fe;
+            text-align: center;
+        }
+
+        .box p {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Responsive */
+        @media(max-width: 700px){
+            .boxes {
+                flex-direction: column;
+            }
+            .box {
+                flex: 1 1 100%;
+            }
+        }
+
+        /* Optional Home Button */
+        .home-btn {
+            display: block;
+            width: 180px;
+            margin: 30px auto 0 auto;
+            padding: 12px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+            text-decoration: none;
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        .home-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Automatic Timetable Generator</h2>
+        
+        <div class="description">
+            The <b>Automatic Timetable Generator</b> is a web-based application developed using <b>Django</b>. 
+            It automatically creates structured and conflict-free academic timetables for institutions. 
+            The system takes into account courses, teachers, classrooms, and time constraints to generate 
+            optimized schedules without manual effort. This project helps institutions save time, reduce 
+            errors, and provide better planning for students and faculty.
+        </div>
+
+        <div class="boxes">
+            <div class="box">
+                <h3><i class="fas fa-check-circle"></i> Advantages</h3>
+                <p>
+                    - Saves significant time compared to manual scheduling.<br>
+                    - Reduces conflicts between courses and teachers.<br>
+                    - Provides clear and structured timetable for students and staff.<br>
+                    - Can handle multiple constraints efficiently.<br>
+                    - Improves planning and organization in educational institutions.
+                </p>
+            </div>
+
+            <div class="box">
+                <h3><i class="fas fa-times-circle"></i> Disadvantages</h3>
+                <p>
+                    - Requires correct and complete input data for accurate results.<br>
+                    - May not handle unexpected changes dynamically.<br>
+                    - Initial setup may be time-consuming.<br>
+                    - Limited customization without modifying the code.<br>
+                    - Depends on the availability of a stable web server and database.
+                </p>
+            </div>
+        </div>
+
+        <a href="{% url 'home' %}" class="home-btn">← Back to Home</a>
+    </div>
+</body>
+</html>

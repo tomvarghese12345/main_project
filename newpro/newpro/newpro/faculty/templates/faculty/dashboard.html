@@ -1,0 +1,114 @@
+{% load custom_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ faculty.name }} - Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    body { background-color: #f8f9fa; }
+    table { text-align: center; }
+    th, td { vertical-align: middle !important; height: 70px; }
+    .lecture { background-color: #dbeafe; }
+    .lab { background-color: #dcfce7; }
+  </style>
+</head>
+<body>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3>Welcome, {{ faculty.name }}</h3>
+      <a href="{% url 'faculty_logout' %}" class="btn btn-danger">Logout</a>
+    </div>
+
+    <h4>Your Timetable</h4>
+    <a href="{% url 'download_pdf' 'faculty' faculty.id %}" class="btn btn-sm btn-primary mb-2">Download PDF</a>
+    
+    <a href="{% url 'course_diary' %}" 
+      class="btn btn-sm btn-success mb-2">
+      Course Diary
+     </a>
+
+    <a href="{% url 'apply_leave' %}"
+       class="btn btn-sm btn-warning mb-2">
+      Apply Leave
+    </a>
+
+    <table class="table table-bordered table-striped shadow-sm">
+      <thead class="table-primary">
+        <tr>
+          <th>Day / Slot</th>
+          {% for period in periods %}<th>P{{ period }}</th>{% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for day,label in days|zip_lists:day_labels %}
+          <tr>
+            <td><strong>{{ label }}</strong></td>
+            {% for period in periods %}
+              {% with key=day|make_key:period %}
+                {% with entry=faculty_map|get_item:key %}
+                  {% if entry %}
+                    <td class="{{ entry.class_type|lower }}">
+                      {{ entry.subject.subject_name }}<br>
+                      <small>{{ entry.classroom.semester }}</small>
+                    </td>
+                  {% else %}
+                    <td>—</td>
+                  {% endif %}
+                {% endwith %}
+              {% endwith %}
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h4 class="mt-5">Class-wise Timetables</h4>
+{% for classroom, class_map in class_maps.items %}
+  <div class="mb-4">
+    <h5 class="mb-2">
+      {{ classroom.semester }}
+      <!-- ✅ FIXED LINE HERE -->
+      <a href="{% url 'download_pdf' 'class' classroom.id %}" 
+         class="btn btn-sm btn-primary float-end">
+         Download PDF
+      </a>
+    </h5>
+
+    <table class="table table-bordered table-striped shadow-sm">
+      <thead class="table-secondary">
+        <tr>
+          <th>Day / Slot</th>
+          {% for period in periods %}
+            <th>P{{ period }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for day, label in days|zip_lists:day_labels %}
+        <tr>
+          <td><strong>{{ label }}</strong></td>
+          {% for period in periods %}
+            {% with key=day|make_key:period %}
+              {% with entry=class_map|get_item:key %}
+                {% if entry %}
+                  <td class="{{ entry.class_type|lower }}">
+                    {{ entry.subject.subject_name }}<br>
+                    <small>{{ entry.faculty.name }}</small><br>
+                    <small>{{ entry.classroom.classroom_name }}</small>
+                  </td>
+                {% else %}
+                  <td>—</td>
+                {% endif %}
+              {% endwith %}
+            {% endwith %}
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endfor %}
+
+</div>
+</body>
+</html>

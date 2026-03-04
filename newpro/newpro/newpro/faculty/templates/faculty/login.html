@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Faculty Login</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    /* Interactive background with overlay */
+    body {
+      min-height: 100vh;
+      background: 
+        linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+        url("{% static 'images/faculty-bg.jpg' %}") no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      transition: background 0.5s ease;
+      animation: bgMove 30s ease-in-out infinite;
+    }
+
+   
+
+    /* Optional: add slight shadow to the card for better contrast */
+    .card {
+    backdrop-filter: blur(10px); /* keeps text readable with a blur */
+    background: rgba(255, 255, 255, 0.15); /* transparent white */
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25); /* subtle shadow */
+    color: white; /* text color to stand out on dark background */
+}
+
+    /* Back to Home Button */
+    .home-btn {
+      display: block;
+      margin: 15px auto 0 auto;
+      width: 50%;
+      text-align: center;
+      padding: 10px 0;
+      background: linear-gradient(45deg, #00f2fe, #4facfe);
+      color: rgb(122, 121, 121);
+      font-weight: bold;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: transform 0.3s, background 0.3s;
+    }
+
+    .home-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(45deg, #4facfe, #00f2fe);
+    }
+  </style>
+</head>
+<body class="d-flex justify-content-center align-items-center vh-100">
+
+  <!-- Login Card -->
+  <div class="card p-4 shadow" style="width: 400px;">
+    <h3 class="text-center mb-4">Faculty Login</h3>
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert alert-danger">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+    <form method="POST">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Faculty ID</label>
+        <input type="text" name="faculty_id" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+
+    <!-- Back to Home Button -->
+    <a href="{% url 'home' %}" class="home-btn">← Back to Home</a>
+  </div>
+
+</body>
+</html>

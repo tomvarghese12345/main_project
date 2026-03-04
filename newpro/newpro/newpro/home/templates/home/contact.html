@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contact | NewPro</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: 
+        linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+        url("{% static 'images/timetable.jpg' %}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+
+
+        .contact-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            width: 380px;
+            border-radius: 15px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            color: white;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .contact-container h2 {
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .contact-container input,
+        .contact-container textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .contact-container input:focus,
+        .contact-container textarea:focus {
+            box-shadow: 0 0 10px #4facfe;
+        }
+
+        .contact-container button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .contact-container button:hover {
+            transform: scale(1.05);
+        }
+
+        .home-box {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .home-btn {
+            display: inline-block;
+            background-color: #4facfe;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        .home-btn:hover {
+            background-color: #00f2fe;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="contact-container">
+    <h2>Contact Me</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="text" name="phone" placeholder="Phone Number" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <textarea name="message" rows="4" placeholder="Your Message" required></textarea>
+        <button type="submit">Send Message</button>
+    </form>
+
+
+        <!-- Back to Home Button -->
+        <div class="home-box">
+            <a href="{% url 'home' %}" class="home-btn">← Back to Home</a>
+        </div>
+
+</div>
+
+</body>
+</html>

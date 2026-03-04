@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NewPro | Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            width: 100%;
+            background: rgba(0,0,0,0.7);
+            padding: 15px 0;
+            z-index: 1000;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: 600;
+        }
+
+        nav a:hover {
+            color: #00c6ff;
+        }
+
+        /* Hero Section */
+        .hero {
+    height: 100vh;
+    background: url('https://images.unsplash.com/photo-1580582932707-520aed937b7b') no-repeat center center/cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+}
+
+        
+
+        .hero h1 {
+            font-size: 50px;
+        }
+
+        .btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 12px 25px;
+            background: #00c6ff;
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #0072ff;
+            transform: scale(1.05);
+        }
+
+        section {
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 60%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .contact-form button {
+            padding: 10px 25px;
+            border: none;
+            background: #0072ff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        footer {
+            background: #111;
+            color: white;
+            padding: 20px;
+        }
+    .developer-box {
+    width: 350px;
+    margin: 30px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+.developer-box:hover {
+    transform: translateY(-10px);
+}
+
+.skills {
+    margin-top: 15px;
+}
+
+.skills span {
+    display: inline-block;
+    background: #0072ff;
+    color: white;
+    padding: 8px 15px;
+    margin: 5px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <a href="/">Home</a>
+    <a href="/about/">About</a>
+   
+    <a href="/developer/">Developer</a>
+    <a href="/contact/">Contact</a>
+</nav>
+
+
+<!-- Home -->
+<div class="hero" id="home">
+    <div>
+        <h1>Welcome to Automatic TimeTable Generator</h1>
+        <p>Django Based Faculty Management System</p>
+        <a href="/login/" class="btn">Admin Login</a>
+        <a href="/faculty/login" class="btn">Faculty Login</a>
+    </div>
+</div>
+
+
+
+<footer>
+    © 2026 NewPro | Developed by Tom Varghese
+</footer>
+
+</body>
+</html>
+

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 4px;
+            text-align: center;
+        }
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h2>{{ object.semester }} - Class Timetable</h2>
+
+<table>
+    <tr>
+        <th>Day / Slot</th>
+        {% for period in periods %}
+            <th>P{{ period }}</th>
+        {% endfor %}
+    </tr>
+
+    {% for row in table_data %}
+    <tr>
+        {% for cell in row %}
+            <td>{{ cell|linebreaksbr }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

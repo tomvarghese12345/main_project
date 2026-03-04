@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+{% load custom_filters %}
+<head>
+    <title>Automatic Timetable Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Base Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            padding: 20px;
+            color: #333;
+        }
+
+        h2, h3, h4 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        h3, h4 {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(90deg, #764ba2, #667eea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        h3:hover, h4:hover {
+            background: linear-gradient(90deg, #ff6a00, #ee0979);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transform: scale(1.05);
+        }
+
+        /* Main Heading */
+        h2.main-heading {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            font-size: 38px;
+            font-weight: 900;
+            text-align: center;
+            background: linear-gradient(90deg, #764ba2, #667eea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.15);
+            animation: shine 4s linear infinite;
+            margin-bottom: 30px;
+        }
+
+        @keyframes shine {
+            0% { background-position: -500px; }
+            100% { background-position: 500px; }
+        }
+
+        hr {
+            margin: 25px 0;
+            border: none;
+            border-top: 2px solid #ccc;
+        }
+
+        a {
+            text-decoration: none;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Form Styling */
+        .form-inline {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .form-inline input[type="text"],
+        .form-inline input[type="number"],
+        .form-inline input[type="password"],
+        .form-inline select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            flex: 1;
+        }
+
+        .form-inline button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            background-color: #764ba2;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .form-inline button i {
+            margin-right: 6px;
+        }
+
+        .form-inline button:hover {
+            background-color: #667eea;
+        }
+
+        /* Delete buttons */
+        button.delete-btn {
+            padding: 5px 10px;
+            font-size: 12px;
+            color: #fff;
+            background-color: #e74c3c;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button.delete-btn i {
+            margin-right: 4px;
+        }
+
+        button.delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px 6px;
+            text-align: center;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        th {
+            background-color: #764ba2;
+            color: #fff;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover td {
+            background-color: #e8f0fe;
+        }
+
+        .timetable th {
+            background-color: #5d3fd3;
+        }
+
+        .timetable td.absent {
+            background-color: #fdd !important;
+            font-weight: bold;
+            color: #900;
+        }
+
+        .timetable td {
+            min-width: 60px;
+        }
+
+        /* Generate / Delete Timetable Buttons */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .button-group button {
+            padding: 10px 20px;
+            font-size: 15px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+            transition: 0.3s;
+        }
+
+        .button-group button i {
+            margin-right: 6px;
+        }
+
+        .button-group button.generate-timetable {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+
+        .button-group button.generate-timetable:hover {
+            background-color: #45a049;
+        }
+
+        .button-group button.delete-timetable {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+
+        .button-group button.delete-timetable:hover {
+            background-color: #c0392b;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-inline { flex-direction: column; }
+            .form-inline input, .form-inline select, .form-inline button { width: 100%; }
+            table { font-size: 12px; }
+            .button-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<h2 class="main-heading">Automatic Timetable Generator System</h2>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <a href="{% url 'logout' %}">Logout</a>
+    <a href="{% url 'leave_applications_admin' %}"
+       style="padding: 8px 16px; background-color: #ff9800; color: #fff; border-radius: 6px; font-weight: bold;">
+        <i class="fa fa-envelope-open-text"></i> Leave Applications
+    </a>
+</div>
+<hr>
+
+<!-- Faculties -->
+<h3>Add Faculty</h3>
+<form method="POST" class="form-inline">{% csrf_token %}{{ form.as_p }}
+<button name="add_faculty"><i class="fa fa-plus"></i>Add Faculty</button></form>
+
+<h3>Faculties</h3>
+<table>
+<tr><th>Name</th><th>Faculty ID</th><th>Action</th></tr>
+{% for f in faculties %}
+<tr>
+<td>{{ f.name }}</td>
+<td>{{ f.faculty_id }}</td>
+<td>
+<form method="POST" action="{% url 'delete_faculty' f.id %}">{% csrf_token %}
+<button type="submit" class="delete-btn"><i class="fa fa-trash"></i>Delete</button>
+</form>
+</td>
+</tr>
+{% endfor %}
+</table>
+
+<!-- Classrooms -->
+<h3>Add Classroom (Semester)</h3>
+<form method="POST" class="form-inline">{% csrf_token %}{{ cform.as_p }}
+<button name="add_classroom"><i class="fa fa-plus"></i>Add Classroom</button></form>
+
+<h3>Classrooms</h3>
+<table>
+<tr><th>Name</th><th>Semester</th><th>Action</th></tr>
+{% for c in classrooms %}
+<tr>
+<td>{{ c.name }}</td>
+<td>{{ c.semester }}</td>
+<td>
+<form method="POST" action="{% url 'delete_classroom' c.id %}">{% csrf_token %}
+<button type="submit" class="delete-btn"><i class="fa fa-trash"></i>Delete</button>
+</form>
+</td>
+</tr>
+{% endfor %}
+</table>
+
+<!-- Subjects -->
+<h3>Add Subject</h3>
+<form method="POST" class="form-inline">{% csrf_token %}{{ sform.as_p }}
+<button name="add_subject"><i class="fa fa-plus"></i>Add Subject</button></form>
+
+<h3>Subjects</h3>
+<table>
+<tr><th>Subject Name</th><th>Course ID</th><th>Action</th></tr>
+{% for s in subjects %}
+<tr>
+<td>{{ s.subject_name }}</td>
+<td>{{ s.course_id }}</td>
+<td>
+<form method="POST" action="{% url 'delete_subject' s.id %}">{% csrf_token %}
+<button type="submit" class="delete-btn"><i class="fa fa-trash"></i>Delete</button>
+</form>
+</td>
+</tr>
+{% endfor %}
+</table>
+
+<hr>
+
+<!-- Assignments -->
+<h3>Assign Subjects to Faculty & Class</h3>
+<form method="POST" class="form-inline">{% csrf_token %}{{ aform.as_p }}
+<button name="assign_subject"><i class="fa fa-check"></i>Assign</button></form>
+
+<h4>Assignments</h4>
+<table>
+<tr><th>Faculty</th><th>Subject</th><th>Classroom</th><th>Type</th><th>Action</th></tr>
+{% for a in assignments %}
+<tr>
+<td>{{ a.faculty.name }}</td>
+<td>{{ a.subject.subject_name }}</td>
+<td>{{ a.classroom.semester }}</td>
+<td>{{ a.class_type }}</td>
+<td>
+<form method="POST" action="{% url 'delete_assignment' a.id %}">{% csrf_token %}
+<button type="submit" class="delete-btn"><i class="fa fa-trash"></i>Delete</button>
+</form>
+</td>
+</tr>
+{% endfor %}
+</table>
+
+<!-- Generate / Delete Timetable -->
+<div class="button-group">
+<form method="POST">{% csrf_token %}
+<button type="submit" name="generate_timetable" class="generate-timetable"><i class="fa fa-calendar"></i>Generate Timetable</button>
+</form>
+<form action="{% url 'delete_timetable' %}" method="POST">{% csrf_token %}
+<button type="submit" class="delete-timetable"><i class="fa fa-times"></i>Delete Timetable</button>
+</form>
+</div>
+
+<!-- Class-wise Timetable -->
+<h3>📘 Class-wise Timetables</h3>
+{% for classroom in classrooms %}
+<h4>{{ classroom.semester }}</h4>
+<table class="timetable">
+<tr><th>Day/Slot</th>{% for p in period_range %}<th>P{{ p }}</th>{% endfor %}</tr>
+{% for day,label in DAYS_OF_WEEK %}
+<tr>
+<td>{{ label }}</td>
+{% for p in period_range %}
+<td class="{% with entry=timetable|get_item_classroom:classroom|get_item_day:day|get_item_period:p %}{% if entry and entry.faculty.is_absent %}absent{% endif %}{% endwith %}">
+{% with entry=timetable|get_item_classroom:classroom|get_item_day:day|get_item_period:p %}
+{% if entry %}{{ entry.subject.subject_name }}<br>{{ entry.faculty.name }}{% else %}----{% endif %}
+{% endwith %}
+</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</table>
+{% endfor %}
+
+<!-- Faculty-wise Timetable -->
+<h3>👩‍🏫 Faculty-wise Timetables</h3>
+{% for faculty in faculties %}
+<h4>{{ faculty.name }}</h4>
+<table class="timetable">
+<tr><th>Day/Slot</th>{% for p in period_range %}<th>P{{ p }}</th>{% endfor %}</tr>
+{% for day,label in DAYS_OF_WEEK %}
+<tr>
+<td>{{ label }}</td>
+{% for p in period_range %}
+<td class="{% with entry=timetable|get_item_faculty:faculty|get_item_day:day|get_item_period:p %}{% if entry and entry.faculty.is_absent %}absent{% endif %}{% endwith %}">
+{% with entry=timetable|get_item_faculty:faculty|get_item_day:day|get_item_period:p %}
+{% if entry %}{{ entry.subject.subject_name }}<br>{{ entry.classroom.semester }}{% else %}----{% endif %}
+{% endwith %}
+</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</table>
+{% endfor %}
+
+</body>
+</html>
