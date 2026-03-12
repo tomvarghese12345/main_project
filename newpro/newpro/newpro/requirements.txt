@@ -1,6 +1,7 @@
-﻿Django==5.2.1
+Django==5.2.1
 gunicorn
 whitenoise
 pillow
 reportlab
 xhtml2pdf
+
