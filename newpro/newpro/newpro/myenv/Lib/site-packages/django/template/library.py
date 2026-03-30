@@ -4,7 +4,6 @@ from importlib import import_module
 from inspect import getfullargspec, unwrap
 
 from django.utils.html import conditional_escape
-from django.utils.inspect import lazy_annotations
 
 from .base import Node, Template, token_kwargs
 from .exceptions import TemplateSyntaxError
@@ -110,16 +109,15 @@ class Library:
         """
 
         def dec(func):
-            with lazy_annotations():
-                (
-                    params,
-                    varargs,
-                    varkw,
-                    defaults,
-                    kwonly,
-                    kwonly_defaults,
-                    _,
-                ) = getfullargspec(unwrap(func))
+            (
+                params,
+                varargs,
+                varkw,
+                defaults,
+                kwonly,
+                kwonly_defaults,
+                _,
+            ) = getfullargspec(unwrap(func))
             function_name = name or func.__name__
 
             @wraps(func)
@@ -166,16 +164,16 @@ class Library:
 
         def dec(func):
             nonlocal end_name
-            with lazy_annotations():
-                (
-                    params,
-                    varargs,
-                    varkw,
-                    defaults,
-                    kwonly,
-                    kwonly_defaults,
-                    _,
-                ) = getfullargspec(unwrap(func))
+
+            (
+                params,
+                varargs,
+                varkw,
+                defaults,
+                kwonly,
+                kwonly_defaults,
+                _,
+            ) = getfullargspec(unwrap(func))
             function_name = name or func.__name__
 
             if end_name is None:
@@ -250,16 +248,15 @@ class Library:
         """
 
         def dec(func):
-            with lazy_annotations():
-                (
-                    params,
-                    varargs,
-                    varkw,
-                    defaults,
-                    kwonly,
-                    kwonly_defaults,
-                    _,
-                ) = getfullargspec(unwrap(func))
+            (
+                params,
+                varargs,
+                varkw,
+                defaults,
+                kwonly,
+                kwonly_defaults,
+                _,
+            ) = getfullargspec(unwrap(func))
             function_name = name or func.__name__
 
             @wraps(func)
