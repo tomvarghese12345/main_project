@@ -4,6 +4,8 @@
 <head>
     <title>Automatic Timetable Generator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap 5 (collapse) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
@@ -70,6 +72,51 @@
 
         a:hover {
             text-decoration: underline;
+        }
+
+        /* Collapsible admin section cards */
+        .admin-section-card {
+            box-shadow: 0 4px 18px rgba(118, 75, 162, 0.12);
+            border-radius: 12px !important;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .admin-section-header {
+            background: linear-gradient(90deg, #764ba2, #667eea);
+            color: #fff;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            border: none;
+            padding: 14px 18px;
+            cursor: pointer;
+            user-select: none;
+            transition: filter 0.2s ease;
+        }
+
+        .admin-section-header:hover {
+            filter: brightness(1.05);
+        }
+
+        .admin-section-header:focus {
+            outline: 2px solid rgba(255,255,255,0.6);
+            outline-offset: 2px;
+        }
+
+        .admin-section-header .collapse-chevron {
+            display: inline-block;
+            transition: transform 0.35s ease;
+            font-size: 0.85em;
+            opacity: 0.95;
+        }
+
+        .admin-section-header.collapsed .collapse-chevron {
+            transform: rotate(-90deg);
+        }
+
+        .admin-section-card .card-body {
+            padding: 1.25rem 1.35rem;
         }
 
         /* Form Styling */
@@ -174,75 +221,112 @@
             min-width: 60px;
         }
 
-        /* Generate / Delete Timetable Buttons */
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+        /* Collapse transition smoothness (Bootstrap already animates height) */
+        .collapse {
+            transition: height 0.35s ease;
         }
 
-        .button-group button {
-            padding: 10px 20px;
-            font-size: 15px;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            flex: 1;
-            transition: 0.3s;
+        /* Top-right action buttons (mobile friendly wrapping) */
+        .top-actions {
+            flex: 0 0 auto;
         }
 
-        .button-group button i {
-            margin-right: 6px;
-        }
-
-        .button-group button.generate-timetable {
-            background-color: #4CAF50;
-            color: #fff;
-        }
-
-        .button-group button.generate-timetable:hover {
-            background-color: #45a049;
-        }
-
-        .button-group button.delete-timetable {
-            background-color: #e74c3c;
-            color: #fff;
-        }
-
-        .button-group button.delete-timetable:hover {
-            background-color: #c0392b;
+        /* Ensure top action buttons/links take full width on small screens */
+        .top-actions > form,
+        .top-actions > a {
+            width: 100%;
         }
 
         /* Responsive */
+        @media (min-width: 576px) {
+            .top-actions > form,
+            .top-actions > a {
+                width: auto;
+            }
+        }
+
         @media (max-width: 768px) {
+            .form-inline {
+                display: block; /* stack fields vertically on mobile */
+            }
+
+            .form-inline p {
+                margin-bottom: 0.75rem;
+            }
+
             .form-inline { flex-direction: column; }
             .form-inline input, .form-inline select, .form-inline button { width: 100%; }
             table { font-size: 12px; }
             .button-group { flex-direction: column; }
+            h2.main-heading { font-size: 26px; }
+
+            td button.delete-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
+<div class="container-fluid px-0 px-sm-2 px-lg-3" style="max-width: 1400px; margin: 0 auto;">
 <h2 class="main-heading">Automatic Timetable Generator System</h2>
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
     <a href="{% url 'logout' %}">Logout</a>
-    <a href="{% url 'leave_applications_admin' %}"
-       style="padding: 8px 16px; background-color: #ff9800; color: #fff; border-radius: 6px; font-weight: bold;">
-        <i class="fa fa-envelope-open-text"></i> Leave Applications
-    </a>
-</div>
-<hr>
+    <div class="top-actions d-grid d-sm-flex justify-content-end gap-2 flex-wrap">
+        <form method="POST" action="{% url 'dashboard' %}" class="m-0">
+            {% csrf_token %}
+            <button type="submit" name="generate_timetable" class="btn btn-success w-100 w-sm-auto"
+                    style="padding: 8px 16px; border-radius: 6px; font-weight: bold;">
+                <i class="fa fa-calendar"></i> Generate Timetable
+            </button>
+        </form>
 
-<!-- Faculties -->
+        <form method="POST" action="{% url 'delete_timetable' %}" class="m-0">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger w-100 w-sm-auto"
+                    style="padding: 8px 16px; border-radius: 6px; font-weight: bold;"
+                    onclick="return confirm('Are you sure you want to delete the timetable?');">
+                <i class="fa fa-times"></i> Delete Timetable
+            </button>
+        </form>
+
+        <a href="{% url 'leave_applications_admin' %}"
+           class="w-100 w-sm-auto"
+           style="padding: 8px 16px; background-color: #ff9800; color: #fff; border-radius: 6px; font-weight: bold;">
+            <i class="fa fa-envelope-open-text"></i> Leave Applications
+        </a>
+    </div>
+</div>
+<hr class="mt-0">
+
+<!-- Faculties: Add -->
+<div class="card admin-section-card mb-4">
+    <div class="card-header admin-section-header d-flex justify-content-between align-items-center"
+         data-bs-toggle="collapse" data-bs-target="#sectionAddFaculty" aria-expanded="true" aria-controls="sectionAddFaculty" role="button" tabindex="0">
+        <span>Add Faculty</span>
+        <span class="collapse-chevron" aria-hidden="true">▼</span>
+    </div>
+    <div id="sectionAddFaculty" class="collapse show">
+        <div class="card-body">
 <h3>Add Faculty</h3>
 <form method="POST" class="form-inline">{% csrf_token %}{{ form.as_p }}
 <button name="add_faculty"><i class="fa fa-plus"></i>Add Faculty</button></form>
+        </div>
+    </div>
+</div>
 
+<!-- Faculties: List -->
+<div class="card admin-section-card mb-4">
+    <div class="card-header admin-section-header collapsed d-flex justify-content-between align-items-center"
+         data-bs-toggle="collapse" data-bs-target="#sectionFacultiesList" aria-expanded="false" aria-controls="sectionFacultiesList" role="button" tabindex="0">
+        <span>Faculties List</span>
+        <span class="collapse-chevron" aria-hidden="true">▼</span>
+    </div>
+    <div id="sectionFacultiesList" class="collapse">
+        <div class="card-body">
 <h3>Faculties</h3>
-<table>
+<div class="table-responsive mb-3">
+<table class="table">
 <tr><th>Name</th><th>Faculty ID</th><th>Action</th></tr>
 {% for f in faculties %}
 <tr>
@@ -256,14 +340,39 @@
 </tr>
 {% endfor %}
 </table>
+</div>
+        </div>
+    </div>
+</div>
 
-<!-- Classrooms -->
+<!-- Classrooms: Add -->
+<div class="card admin-section-card mb-4">
+    <div class="card-header admin-section-header collapsed d-flex justify-content-between align-items-center"
+         data-bs-toggle="collapse" data-bs-target="#sectionAddClassroom" aria-expanded="false" aria-controls="sectionAddClassroom" role="button" tabindex="0">
+        <span>Add Classroom (Semester)</span>
+        <span class="collapse-chevron" aria-hidden="true">▼</span>
+    </div>
+    <div id="sectionAddClassroom" class="collapse">
+        <div class="card-body">
 <h3>Add Classroom (Semester)</h3>
 <form method="POST" class="form-inline">{% csrf_token %}{{ cform.as_p }}
 <button name="add_classroom"><i class="fa fa-plus"></i>Add Classroom</button></form>
+        </div>
+    </div>
+</div>
 
+<!-- Classrooms: List -->
+<div class="card admin-section-card mb-4">
+    <div class="card-header admin-section-header collapsed d-flex justify-content-between align-items-center"
+         data-bs-toggle="collapse" data-bs-target="#sectionClassroomsList" aria-expanded="false" aria-controls="sectionClassroomsList" role="button" tabindex="0">
+        <span>Classrooms List</span>
+        <span class="collapse-chevron" aria-hidden="true">▼</span>
+    </div>
+    <div id="sectionClassroomsList" class="collapse">
+        <div class="card-body">
 <h3>Classrooms</h3>
-<table>
+<div class="table-responsive mb-3">
+<table class="table">
 <tr><th>Name</th><th>Semester</th><th>Action</th></tr>
 {% for c in classrooms %}
 <tr>
@@ -277,14 +386,39 @@
 </tr>
 {% endfor %}
 </table>
+</div>
+        </div>
+    </div>
+</div>
 
-<!-- Subjects -->
+<!-- Subjects: Add -->
+<div class="card admin-section-card mb-4">
+    <div class="card-header admin-section-header collapsed d-flex justify-content-between align-items-center"
+         data-bs-toggle="collapse" data-bs-target="#sectionAddSubject" aria-expanded="false" aria-controls="sectionAddSubject" role="button" tabindex="0">
+        <span>Add Subject</span>
+        <span class="collapse-chevron" aria-hidden="true">▼</span>
+    </div>
+    <div id="sectionAddSubject" class="collapse">
+        <div class="card-body">
 <h3>Add Subject</h3>
 <form method="POST" class="form-inline">{% csrf_token %}{{ sform.as_p }}
 <button name="add_subject"><i class="fa fa-plus"></i>Add Subject</button></form>
+        </div>
+    </div>
+</div>
 
+<!-- Subjects: List -->
+<div class="card admin-section-card mb-4">
+    <div class="card-header admin-section-header collapsed d-flex justify-content-between align-items-center"
+         data-bs-toggle="collapse" data-bs-target="#sectionSubjectsList" aria-expanded="false" aria-controls="sectionSubjectsList" role="button" tabindex="0">
+        <span>Subjects List</span>
+        <span class="collapse-chevron" aria-hidden="true">▼</span>
+    </div>
+    <div id="sectionSubjectsList" class="collapse">
+        <div class="card-body">
 <h3>Subjects</h3>
-<table>
+<div class="table-responsive mb-3">
+<table class="table">
 <tr><th>Subject Name</th><th>Course ID</th><th>Action</th></tr>
 {% for s in subjects %}
 <tr>
@@ -298,16 +432,41 @@
 </tr>
 {% endfor %}
 </table>
+</div>
+        </div>
+    </div>
+</div>
 
 <hr>
 
-<!-- Assignments -->
+<!-- Assignments: Form -->
+<div class="card admin-section-card mb-4">
+    <div class="card-header admin-section-header collapsed d-flex justify-content-between align-items-center"
+         data-bs-toggle="collapse" data-bs-target="#sectionAssignSubjects" aria-expanded="false" aria-controls="sectionAssignSubjects" role="button" tabindex="0">
+        <span>Assign Subjects to Faculty &amp; Class</span>
+        <span class="collapse-chevron" aria-hidden="true">▼</span>
+    </div>
+    <div id="sectionAssignSubjects" class="collapse">
+        <div class="card-body">
 <h3>Assign Subjects to Faculty & Class</h3>
 <form method="POST" class="form-inline">{% csrf_token %}{{ aform.as_p }}
 <button name="assign_subject"><i class="fa fa-check"></i>Assign</button></form>
+        </div>
+    </div>
+</div>
 
+<!-- Assignments: List -->
+<div class="card admin-section-card mb-4">
+    <div class="card-header admin-section-header collapsed d-flex justify-content-between align-items-center"
+         data-bs-toggle="collapse" data-bs-target="#sectionAssignmentsList" aria-expanded="false" aria-controls="sectionAssignmentsList" role="button" tabindex="0">
+        <span>Assignments</span>
+        <span class="collapse-chevron" aria-hidden="true">▼</span>
+    </div>
+    <div id="sectionAssignmentsList" class="collapse">
+        <div class="card-body">
 <h4>Assignments</h4>
-<table>
+<div class="table-responsive mb-3">
+<table class="table">
 <tr><th>Faculty</th><th>Subject</th><th>Classroom</th><th>Type</th><th>Action</th></tr>
 {% for a in assignments %}
 <tr>
@@ -323,22 +482,25 @@
 </tr>
 {% endfor %}
 </table>
-
-<!-- Generate / Delete Timetable -->
-<div class="button-group">
-<form method="POST">{% csrf_token %}
-<button type="submit" name="generate_timetable" class="generate-timetable"><i class="fa fa-calendar"></i>Generate Timetable</button>
-</form>
-<form action="{% url 'delete_timetable' %}" method="POST">{% csrf_token %}
-<button type="submit" class="delete-timetable"><i class="fa fa-times"></i>Delete Timetable</button>
-</form>
+</div>
+        </div>
+    </div>
 </div>
 
 <!-- Class-wise Timetable -->
+<div class="card admin-section-card mb-4">
+    <div class="card-header admin-section-header collapsed d-flex justify-content-between align-items-center"
+         data-bs-toggle="collapse" data-bs-target="#sectionClassTimetables" aria-expanded="false" aria-controls="sectionClassTimetables" role="button" tabindex="0">
+        <span>📘 Class-wise Timetables</span>
+        <span class="collapse-chevron" aria-hidden="true">▼</span>
+    </div>
+    <div id="sectionClassTimetables" class="collapse">
+        <div class="card-body">
 <h3>📘 Class-wise Timetables</h3>
 {% for classroom in classrooms %}
 <h4>{{ classroom.semester }}</h4>
-<table class="timetable">
+<div class="table-responsive mb-3">
+<table class="timetable table">
 <tr><th>Day/Slot</th>{% for p in period_range %}<th>P{{ p }}</th>{% endfor %}</tr>
 {% for day,label in DAYS_OF_WEEK %}
 <tr>
@@ -353,13 +515,26 @@
 </tr>
 {% endfor %}
 </table>
+ </div>
 {% endfor %}
+        </div>
+    </div>
+</div>
 
 <!-- Faculty-wise Timetable -->
+<div class="card admin-section-card mb-4">
+    <div class="card-header admin-section-header collapsed d-flex justify-content-between align-items-center"
+         data-bs-toggle="collapse" data-bs-target="#sectionFacultyTimetables" aria-expanded="false" aria-controls="sectionFacultyTimetables" role="button" tabindex="0">
+        <span>👩‍🏫 Faculty-wise Timetables</span>
+        <span class="collapse-chevron" aria-hidden="true">▼</span>
+    </div>
+    <div id="sectionFacultyTimetables" class="collapse">
+        <div class="card-body">
 <h3>👩‍🏫 Faculty-wise Timetables</h3>
 {% for faculty in faculties %}
 <h4>{{ faculty.name }}</h4>
-<table class="timetable">
+<div class="table-responsive mb-3">
+<table class="timetable table">
 <tr><th>Day/Slot</th>{% for p in period_range %}<th>P{{ p }}</th>{% endfor %}</tr>
 {% for day,label in DAYS_OF_WEEK %}
 <tr>
@@ -374,7 +549,26 @@
 </tr>
 {% endfor %}
 </table>
+ </div>
 {% endfor %}
+        </div>
+    </div>
+</div>
 
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script>
+(function () {
+    document.querySelectorAll('.admin-section-header[data-bs-toggle="collapse"]').forEach(function (header) {
+        header.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                header.click();
+            }
+        });
+    });
+})();
+</script>
 </body>
 </html>
